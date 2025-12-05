@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Payees extends Model
+class FundSource extends Model
 {
     //* Relation to disbursements
     public function disbursements(){

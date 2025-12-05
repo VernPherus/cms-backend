@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Payees extends Model
+class DisbursementDeduction extends Model
 {
     //* Relation to disbursements
     public function disbursements(){
         return $this->hasMany(Disbursement::class);
     }
+
 }

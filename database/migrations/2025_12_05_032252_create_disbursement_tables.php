@@ -11,18 +11,32 @@ return new class extends Migration
      */
     public function up(): void
     {
+        //* Payees table
         Schema::create('payees', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('');
+            $table->string('address')->nullable();
+            $table->string('type')->default('supplier')->nullable();
             $table->timestamps();
         });
 
+        //* Fund Sources
+        Schema::create('fund_sources', function (Blueprint $table){
+            $table->id();
+            $table->string('code')->unique();
+            $table->string('name');
+            $table->text('description')->nullable();
+            $table->boolean('is_active')->default(true);
+            $table->timestamps();
+        });
+
+        //* Disbursements
         Schema::create('disbursements', function (Blueprint $table){
             $table->id();
 
             //* Foreign key to payee
             $table->foreignId('payee_id')->constrained('payees')->onDelete('cascade');
+            $table->foreignId('fund_source_id')->constrained('fund_sources');
 
             //* Document References
             // indexed for fast search
@@ -43,6 +57,8 @@ return new class extends Migration
             $table->decimal('net_amount', 15, 2);
 
             //* Details
+            $table->text('particulars');
+            $table->text('method')->index(); // Manual or online
 
             //* Status
             $table->string('status')->default('pending')->index();
@@ -50,6 +66,35 @@ return new class extends Migration
 
             $table->timestamps();
             $table->softDeletes(); // for record restoration if required
+        });
+
+        //* Disbursement Items table
+        Schema::create('disbursement_items', function (Blueprint $table) {
+            $table->id();
+            
+            // Link to main disbursement
+            $table->foreignId('disbursement_id')->constrained('disbursements')->onDelete('cascade');
+            
+            // Item Details
+            $table->string('description'); // e.g., "Inv#101 - Catering Services"
+            $table->string('account_code')->nullable(); // Optional: For accounting (e.g., "5-02-05-030")
+            $table->decimal('amount', 15, 2); // The cost of this specific item
+            
+            $table->timestamps();
+        });
+
+        //* Disbursement Deductions
+        Schema::create('disbursement_deductions', function (Blueprint $table) {
+            $table->id();
+            
+            // Link to the main disbursement
+            $table->foreignId('disbursement_id')->constrained('disbursements')->onDelete('cascade');
+            
+            // Description of deduction
+            $table->string('deduction_type'); 
+            $table->decimal('amount', 15, 2);
+            
+            $table->timestamps();
         });
     }
 
@@ -59,5 +104,8 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('payees');
+        Schema::dropIfExists('disbursements');
+        Schema::dropIfExists('disbursement_items');
+        Schema::dropIfExists('disbursement_deductions');
     }
 };

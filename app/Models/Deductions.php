@@ -7,15 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Deductions extends Model
 {
-    use HasFactory;
-
-    protected $fillable = [
-        "phic",
-        "sss",
-        "gsis",
-        "hdmf",
-        "ewt",
-        "vat",
-        "other",
-    ];
+    //* Relation to disbursements
+    public function disbursements(){
+        return $this->hasMany(Disbursement::class);
+    }
 }
