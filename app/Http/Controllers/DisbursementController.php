@@ -2,6 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Disbursement;
+use Illuminate\HTTP\Requests;
+use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
+
 use Illuminate\Http\Request;
 
 class DisbursementController
@@ -16,17 +21,26 @@ class DisbursementController
         $validated = $requests->validate([
             'payee_id' => 'required|exists:payees,id',
             'fund_source_id' => 'required|exists:fund_sources,id',
-            'check_number' => 'nullable|string',
-            'voucher_number' => 'nullable|string',
             'date_received' => 'nullable|date',
-            'purpose' => 'required|string',
+
+            //* Array inputs for Document references
+            'lddap_num' => 'nullable|string',
+            'acic_num' => 'nullable|string',
+            'ors_num' => 'nullable|string',
+            'dv_num' => 'nullable|string',
+            'uacs_code' => 'nullable|string',
+            'resp_code' => 'nullable|string',
+
+            //* Array inputs for Details
+            'particulars' => 'nullable|string',
+            'methods' => 'required',
             
-            // Array inputs for Items
+            //* Array inputs for Items
             'items' => 'required|array|min:1',
             'items.*.description' => 'required|string',
             'items.*.amount' => 'required|numeric|min:0',
             
-            // Array inputs for Deductions (Optional)
+            //* Array inputs for Deductions (Optional)
             'deductions' => 'nullable|array',
             'deductions.*.deduction_type' => 'required|string',
         ]);
@@ -104,13 +118,132 @@ class DisbursementController
 
     /** 
      * UPDATE: Edit an existing record
+     * Strat: Wipe out existing items/deductions and recreate them.
+     * Safer than trying to match IDs for edits in a financial context.
      */
     public function update(Request $request, $id)
     {
-        
+        $disbursement = Disbursement::findOrFail($id);
+
+        // Prevent editing if already approved
+        if ($disbursement->status==='approved') {
+            return response()-> json(['error'=>'Cannot edit an approved disbursement'], 403);
+        }
+
+        // Validate, same rules as store
+        $validated = $requests->validate([
+            'payee_id' => 'required|exists:payees,id',
+            'fund_source_id' => 'required|exists:fund_sources,id',
+            'date_received' => 'nullable|date',
+
+            //* Array inputs for Document references
+            'lddap_num' => 'nullable|string',
+            'acic_num' => 'nullable|string',
+            'ors_num' => 'nullable|string',
+            'dv_num' => 'nullable|string',
+            'uacs_code' => 'nullable|string',
+            'resp_code' => 'nullable|string',
+
+            //* Array inputs for Details
+            'particulars' => 'nullable|string',
+            'methods' => 'required',
+            
+            //* Array inputs for Items
+            'items' => 'required|array|min:1',
+            'items.*.description' => 'required|string',
+            'items.*.amount' => 'required|numeric|min:0',
+            
+            //* Array inputs for Deductions (Optional)
+            'deductions' => 'nullable|array',
+            'deductions.*.deduction_type' => 'required|string',
+        ]);
+
+        return DB::transaction(function () use ($disbursement, $validated){
+            
+            // Update header info
+            $disbursement->update([
+                'payee_id'=> $validated['payee_id'],
+                'fund_source_id'=> $validated['fund_source_id'],
+                'particulars' => $validated['particulars'],
+
+                //* Document references
+                'lddap_num' => $validated['lddap_num'],
+                'acic_num' => $validated['acic_num'],
+                'ors_num' => $validated['ors_num'],
+                'dv_num' => $validated['dv_num'],
+                'uacs_code' => $validated['uacs_code'],
+                'resp_code' => $validated['resp_code'],
+            ]);
+
+            // Delete old children 
+            $disbursement->items()->delete();
+            $disbursement->deductions()->delete();
+
+            // Re-create items
+            $grossAmount = 0;
+            foreach($validated['items'] as $item){
+                $disbursement->items()->create($item);
+                $grossAmount += $item['amount'];
+            }
+
+            // Re-create Deductions
+            $totalDeductions = 0;
+            if(!empty($validated['deductions']))
+            {
+                foreach($validated['deductions']as $deduction)
+                {
+                    $disbursement->deductions()->create($deduction);
+                    $totalDeductions += $deduction['amount'];
+                }            
+            }
+
+            // Update totals
+            $disbursement->update([
+                'gross_amount' => $grossAmount,
+                'total_deductions' => $totalDeductions,
+                'net_amount'=> $grossAmount - $totalDeductions,
+            ]);
+
+            return response()->json(['message'=>'Disbursement updated', 'data'=> $disbursement], 200);
+
+        });
+
     }
 
-    //* Approve Record
+    /**
+     * Approve Record
+     */
+    public function approve($id)
+    {
+        $disbursement = Disbursement::findOrFail($id);
 
-    //* Delete Record
+        $disbursement->update([
+            'status'=>'approved',
+            'approved_at' => now(),
+        ]);
+
+        return response()->json(['message' => 'Disbursement approved successfully'], 200);
+    }
+
+    /**
+     * Delete Record 
+     */
+    public function delete()
+    {
+        $disbursement = Disbursement::findOrFail($id);
+
+        //* OPTIONAL: Check if approved before deleting
+        if($disbursement->status === 'approved')
+        {
+            // Depending on policy, you might block deletion of approved records
+            // return response()->json(['error' => 'Cannot delete approved records'], 403);
+            pass;
+        }
+
+        $disbursement->delete();
+
+        return response()->json(['message'=>'Disbursement moved to trash'], 200);
+
+
+    }
 }
