@@ -12,7 +12,7 @@ use Illuminate\Http\Request;
 class DisbursementController
 {
     /** 
-     * STORE: Create a new disbursement, its items, and deductions. 
+     * *STORE: Create a new disbursement, its items, and deductions. 
      */ 
 
     public function store(Request $requests)
@@ -108,7 +108,7 @@ class DisbursementController
     
 
     /**
-     * Display a single record with all its details
+     * *Display a single record with all its details
      */
     public function show($id)
     {
@@ -211,7 +211,7 @@ class DisbursementController
     }
 
     /**
-     * Approve Record
+     * *Approve Record
      */
     public function approve($id)
     {
@@ -226,7 +226,7 @@ class DisbursementController
     }
 
     /**
-     * Delete Record 
+     * *Delete Record 
      */
     public function delete()
     {
@@ -243,7 +243,6 @@ class DisbursementController
         $disbursement->delete();
 
         return response()->json(['message'=>'Disbursement moved to trash'], 200);
-
 
     }
 }
