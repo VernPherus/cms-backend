@@ -3,7 +3,7 @@
 @section('content')
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h2>Disbursement Monitoring</h2>
-    <a href="{{ route('disbursements.create') }}" class="btn btn-primary">+ New Entry</a>
+    <a href="{{ route('disbursementadmin.create') }}" class="btn btn-primary">+ New Entry</a>
 </div>
 
 <div class="card">

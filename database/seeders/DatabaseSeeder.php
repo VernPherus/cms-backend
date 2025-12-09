@@ -2,7 +2,9 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
+use App\Models\FundSource;
+use App\Models\Payee;
+
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -15,11 +17,23 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
+        // Create 3 Specific Fund Sources (Realistic Data)
+        FundSource::factory()
+            ->count(3)
+            ->state(new \Illuminate\Database\Eloquent\Factories\Sequence(
+                ['code' => 'GF-101', 'name' => 'General Fund', 'description' => 'For general operational expenses'],
+                ['code' => 'SEF-200', 'name' => 'Special Education Fund', 'description' => 'School board expenses'],
+                ['code' => 'TF-300', 'name' => 'Trust Fund', 'description' => 'Held in trust for specific purposes'],
+            ))
+            ->create();
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+        // Create 3 Random Payees
+        Payee::factory()->count(3)->create();
+        
+        // Optional: Create one specifically named Payee for testing
+        Payee::factory()->create([
+            'name' => 'Meralco',
+            'type' => 'supplier',
         ]);
     }
 }

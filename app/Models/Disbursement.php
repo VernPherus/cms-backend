@@ -2,10 +2,35 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Disbursement extends Model
 {
+
+    use HasFactory, SoftDeletes;
+
+    protected $fillable = [
+        'payee_id',
+        'fund_source_id',
+        'date_received',
+        'date_entered',
+        'particulars',
+        'status',
+        'method',
+        'gross_amount',
+        'total_deductions',
+        'net_amount',
+        'lddap_num',
+        'acic_num',
+        'ors_num',
+        'dv_num',
+        'uacs_code',
+        'resp_code',
+        'approved_at'
+    ];
+
     protected $dates = ['date_received', 'date_entered', 'approved_at'];
 
     //* Relationship to payee
