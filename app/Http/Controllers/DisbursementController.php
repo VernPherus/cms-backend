@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Disbursement;
+use App\Models\Payee;
+use App\Models\FundSource;
+use App\Models\DisbursementItem;
 use Illuminate\HTTP\Requests;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
@@ -11,6 +14,7 @@ use Illuminate\Http\Request;
 
 class DisbursementController
 {
+    
     /** 
      * *STORE: Create a new disbursement, its items, and deductions. 
      */ 
@@ -33,7 +37,7 @@ class DisbursementController
 
             //* Array inputs for Details
             'particulars' => 'nullable|string',
-            'methods' => 'required',
+            'method' => 'required',
             
             //* Array inputs for Items
             'items' => 'required|array|min:1',
@@ -43,6 +47,7 @@ class DisbursementController
             //* Array inputs for Deductions (Optional)
             'deductions' => 'nullable|array',
             'deductions.*.deduction_type' => 'required|string',
+            'deductions.*.amount' => 'required|numeric|min:0',
         ]);
 
         try {
@@ -57,8 +62,9 @@ class DisbursementController
                     'voucher_number' => $validated['voucher_number'] ?? null,
                     'date_received' => $validated['date_received'] ?? null,
                     'date_entered' => now(),
-                    'purpose' => $validated['purpose'],
+                    'particulars' => $validated['particulars'],
                     'status' => 'pending',
+                    'method'=> $validated['method'],
                     'gross_amount' => 0, 
                     'total_deductions' => 0,
                     'net_amount' => 0,
@@ -102,7 +108,7 @@ class DisbursementController
                 
         } catch (\Throwable $th) {
             // If anything fails above, nothing is saved to the DB.
-            return response()->json(['error' => 'Failed to create record: ' . $e->getMessage()], 500);
+            return response()->json(['error' => 'Failed to create record: ' . $th->getMessage()], 500);
         }
     }
     
@@ -117,7 +123,7 @@ class DisbursementController
     }
 
     /** 
-     * UPDATE: Edit an existing record
+     * *UPDATE: Edit an existing record
      * Strat: Wipe out existing items/deductions and recreate them.
      * Safer than trying to match IDs for edits in a financial context.
      */
@@ -132,7 +138,7 @@ class DisbursementController
 
         // Validate, same rules as store
         $validated = $requests->validate([
-            'payee_id' => 'required|exists:payees,id',
+            'payee_id' => 'required|exists:Payee,id',
             'fund_source_id' => 'required|exists:fund_sources,id',
             'date_received' => 'nullable|date',
 
@@ -146,7 +152,7 @@ class DisbursementController
 
             //* Array inputs for Details
             'particulars' => 'nullable|string',
-            'methods' => 'required',
+            'method' => 'required',
             
             //* Array inputs for Items
             'items' => 'required|array|min:1',
