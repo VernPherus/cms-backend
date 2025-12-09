@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Disbursement;
+use App\Models\Payees;
+use App\Models\FundSource;
 use Illuminate\HTTP\Requests;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
@@ -11,6 +13,37 @@ use Illuminate\Http\Request;
 
 class DisbursementController
 {
+
+    /**
+     * *TEST DISPLAY CODE:
+     */
+
+    /**
+     * INDEX: Loads the dashboard
+     */
+    public function index()
+    {
+        // Get records, ordered by newest first, with pagination
+        $disbursements = Disbursement::with(['payee', 'fundSource'])
+                            ->latest('date_entered')
+                            ->paginate(10);
+
+        return view('disbursements.dashboard', compact('disbursements'));
+    }
+
+    /**
+     * CREATE: Loads the Form
+     */
+    public function create()
+    {
+        // We need these lists to populate the <select> dropdowns
+        $payees = Payees::orderBy('name')->get();
+        $fundSources = FundSource::where('is_active', true)->get();
+
+        return view('disbursements.create', compact('payees', 'fundSources'));
+    }
+
+    
     /** 
      * *STORE: Create a new disbursement, its items, and deductions. 
      */ 
@@ -117,7 +150,7 @@ class DisbursementController
     }
 
     /** 
-     * UPDATE: Edit an existing record
+     * *UPDATE: Edit an existing record
      * Strat: Wipe out existing items/deductions and recreate them.
      * Safer than trying to match IDs for edits in a financial context.
      */
