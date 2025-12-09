@@ -57,7 +57,7 @@ return new class extends Migration
             $table->decimal('net_amount', 15, 2);
 
             //* Details
-            $table->text('particulars');
+            $table->text('particulars')->nullable();
             $table->text('method')->index(); // Manual or online
 
             //* Status
@@ -103,9 +103,11 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('payees');
-        Schema::dropIfExists('disbursements');
-        Schema::dropIfExists('disbursement_items');
         Schema::dropIfExists('disbursement_deductions');
+        Schema::dropIfExists('disbursement_items');
+
+        Schema::dropIfExists('disbursements');
+        Schema::dropIfExists('payees');
+        Schema::dropIfExists('fund_sources');
     }
 };
