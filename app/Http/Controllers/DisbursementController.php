@@ -6,15 +6,14 @@ use App\Models\Disbursement;
 use App\Models\Payee;
 use App\Models\FundSource;
 use App\Models\DisbursementItem;
-use Illuminate\HTTP\Requests;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 
 use Illuminate\Http\Request;
 
-class DisbursementController
+class DisbursementController extends Controller
 {
-    
+
     /** 
      * *STORE: Create a new disbursement, its items, and deductions. 
      */ 
@@ -58,8 +57,14 @@ class DisbursementController
                 $disbursement = Disbursement::create([
                     'payee_id' => $validated['payee_id'],
                     'fund_source_id' => $validated['fund_source_id'],
-                    'check_number' => $validated['check_number'] ?? null,
-                    'voucher_number' => $validated['voucher_number'] ?? null,
+
+                    'lddap_num' => $validated['lddap_num'] ?? null,
+                    'acic_num' => $validated['acic_num'] ?? null,
+                    'ors_num' =>$validated['ors_num'] ?? null,
+                    'dv_num' =>$validated['dv_num'] ?? null,
+                    'uacs_code' =>$validated['uacs_code'] ?? null,
+                    'resp_code' => $validated['resp_code'] ?? null,
+
                     'date_received' => $validated['date_received'] ?? null,
                     'date_entered' => now(),
                     'particulars' => $validated['particulars'],
@@ -173,12 +178,12 @@ class DisbursementController
                 'particulars' => $validated['particulars'],
 
                 //* Document references
-                'lddap_num' => $validated['lddap_num'],
-                'acic_num' => $validated['acic_num'],
-                'ors_num' => $validated['ors_num'],
-                'dv_num' => $validated['dv_num'],
-                'uacs_code' => $validated['uacs_code'],
-                'resp_code' => $validated['resp_code'],
+                'lddap_num' => $validated['lddap_num'] && null,
+                'acic_num' => $validated['acic_num'] && null,
+                'ors_num' => $validated['ors_num'] && null,
+                'dv_num' => $validated['dv_num'] && null,
+                'uacs_code' => $validated['uacs_code'] && null,
+                'resp_code' => $validated['resp_code'] && null,
             ]);
 
             // Delete old children 
