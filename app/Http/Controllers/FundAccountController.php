@@ -6,6 +6,7 @@ use App\Models\Disbursement;
 use App\Models\Payee;
 use App\Models\FundSource;
 
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 
 class FundAccountController extends Controller
@@ -32,9 +33,9 @@ class FundAccountController extends Controller
     public function store(Request $requests)
     {
         // input validation
-        $validated = $requests.validate([
+        $validated = $requests->validate([
             'name' => 'required|string|max:255',
-            'code' => 'required|string|unque:fund_sources,code|max:50',
+            'code' => 'required|string|unique:fund_sources,code|max:50',
             'description' => 'nullable|string',
         ]);
 
@@ -48,16 +49,19 @@ class FundAccountController extends Controller
                     'description' => $validated['description'] ?? null,
                     'is_active' => true,
                 ]);
+
+                // Return results
+                return response() -> json ([
+                    'message' => 'New fund source created successfully', 
+                    'data' => $fundSource
+                ], 201);
             });
             
-            // Return results
-            return response() -> json ([
-                'message' => 'New fund source created successfully', 
-                'data' => $fundSource
-            ], 201);
-
+            
         } catch (\Throwable $th) {
-            return response() -> json(['error'=> 'Failed to create account: ' . $th->getMessage()], 500);
+            return response()->json([
+                'message' => 'Failed to create account: ' . $th->getMessage()
+            ], 500);
         }
     }
 
@@ -66,7 +70,6 @@ class FundAccountController extends Controller
      */
     public function show($id)
     {
-
         $fund = FundSource::findOrFail($id);
         return response() -> json($fund);
     }
@@ -79,7 +82,7 @@ class FundAccountController extends Controller
         $fundSource = FundSource::findOrFail($id);
 
         // input validation
-        $validated = $requests.validate([
+        $validated = $requests->validate([
             'name' => 'required|string|max:255',
             // Unique check ignores the current ID (so you can update name without changing code)
             'code' => 'required|string|max:50|unique:fund_sources,code,' . $id,

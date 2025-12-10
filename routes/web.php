@@ -9,7 +9,13 @@ use App\Models\FundSource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
+Route::get('disbursementadmin/fund/create', [DisbursementAdminController::class, 'fundform'])
+    ->name('disbursementadmin.fundform');
 
+Route::get('disbursementadmin/payee/create', [DisbursementAdminController::class, 'payeeform'])
+    ->name('disbursementadmin.payeeform');
+
+// Standard resource
 Route::resource('disbursementadmin', DisbursementAdminController::class);
 
 Route::get('/', function(){

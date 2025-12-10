@@ -24,10 +24,6 @@
                                 <option value="other">Other</option>
                             </select>
                         </div>
-                        <div class="col-md-6">
-                            <label class="form-label fw-bold">TIN Number</label>
-                            <input type="text" name="tin_number" class="form-control font-monospace" placeholder="000-000-000-000">
-                        </div>
                     </div>
 
                     <div class="mb-4">

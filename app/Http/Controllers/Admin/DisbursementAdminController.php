@@ -33,11 +33,27 @@ class DisbursementAdminController extends Controller
      */
     public function create()
     {
-        // We need these lists to populate the <select> dropdowns
         $payees = Payee::orderBy('name')->get();
         $fundSources = FundSource::where('is_active', true)->get();
 
         return view('disbursements.create', compact('payees', 'fundSources'));
     }
+
+    /**
+     * CREATE FUNDS: Loads fund creation form
+     */
+    public function fundform()
+    {
+        return view('funds.create');
+    }
+
+    /**
+     * CREATE PAYEE: Loads payee account creation form
+     */
+    public function payeeform()
+    {
+        return view('payees.create');
+    }
+
 
 }

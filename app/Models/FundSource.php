@@ -9,6 +9,8 @@ class FundSource extends Model
 {
     use HasFactory;
 
+    protected $fillable = ['name', 'code', 'description', 'is_active'];
+
     //* Relation to disbursements
     public function disbursements(){
         return $this->hasMany(Disbursement::class);

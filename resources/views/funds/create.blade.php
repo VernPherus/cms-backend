@@ -54,9 +54,23 @@
                 alert('Success: ' + body.message);
                 window.location.href = '/funds'; // Update this URL to your actual funds list route
             } else {
-                alert('Error: ' + (body.message || JSON.stringify(body.errors)));
-                btn.disabled = false; btn.innerText = 'Save Fund';
+             let errorMsg = body.message || body.error;
+                
+                if (!errorMsg && body.errors) {
+                    errorMsg = JSON.stringify(body.errors);
+                }
+                
+                alert('Error: ' + (errorMsg || 'Unknown error occurred'));
+                
+                btn.disabled = false; 
+                btn.innerText = originalText;
             }
+        })
+        .catch(error => {
+            console.error('Network Error:', error);
+            alert('A network error occurred. Please check your connection.');
+            btn.disabled = false;
+            btn.innerText = originalText;
         });
     });
 </script>

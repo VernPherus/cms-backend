@@ -2,6 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Disbursement;
+use App\Models\Payee;
+use App\Models\FundSource;
+
+use Illuminate\Support\Facades\DB;
+
 use Illuminate\Http\Request;
 
 class PayeeAccountController extends Controller
@@ -33,13 +39,22 @@ class PayeeAccountController extends Controller
             'type' => 'required|string|in:supplier,employee,government,other', // Enforce specific types
         ]);
 
+        // Start transaction
         try {
+            return DB::transaction(function () use ($validated){
+                $payee = Payee::create([
+                    'name' => $validated['name'],
+                    'address' => $validated['address'] ?? null,
+                    'type' => $validated['type'],
+                ]);
+                
+                return response()->json([
+                    'message' => 'New payee account created successfully',
+                    'data' => $payee
+                ], 201);
+
+            });
             
-            $payee = Payee::create([
-                'name' => $validated['name'],
-                'address' => $validated['address'] ?? null,
-                'type' => $validated['type'],
-            ]);
 
             return response()->json([
                 'message' => 'New payee account created successfully',

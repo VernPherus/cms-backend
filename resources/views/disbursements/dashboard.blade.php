@@ -3,6 +3,8 @@
 @section('content')
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h2>Disbursement Monitoring</h2>
+    <a href="{{ route('disbursementadmin.fundform') }}" class="btn btn-info">+ Add Fund Source</a>
+    <a href="{{ route('disbursementadmin.payeeform') }}" class="btn btn-info">+ Add Payee</a>
     <a href="{{ route('disbursementadmin.create') }}" class="btn btn-primary">+ New Entry</a>
 </div>
 
