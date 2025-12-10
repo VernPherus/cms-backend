@@ -1,21 +1,33 @@
 <?php
 
-use App\Http\Controllers\DisbursementController;
 use App\Http\Controllers\Admin\DisbursementAdminController;
+
+use App\Models\Disbursement;
+use App\Models\Payee;
+use App\Models\FundSource;
+
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
+Route::get('disbursementadmin/fund/create', [DisbursementAdminController::class, 'fundform'])
+    ->name('disbursementadmin.fundform');
+
+Route::get('disbursementadmin/payee/create', [DisbursementAdminController::class, 'payeeform'])
+    ->name('disbursementadmin.payeeform');
+
+// Standard resource
+Route::resource('disbursementadmin', DisbursementAdminController::class);
 
 Route::get('/', function(){
     return redirect()->route('disbursementadmin.index');
 });
 
-// Standard CRUD
-Route::resource('disbursements', DisbursementController::class);
+Route::get('/disbursements/{id}', function ($id) {
+    
+    // Fetch the record with all relationships so the view can display them
+    $disbursement = Disbursement::with(['payee', 'fundSource', 'items', 'deductions'])
+                        ->findOrFail($id);
 
-// Admin 
-Route::resource('disbursementadmin', DisbursementAdminController::class);
+    return view('disbursements.details', compact('disbursement'));
 
-//
-
-Route::patch('/disbursements/{id}/approve', [DisbusrsementController::class, 'approve'])->name('disbursements.approve');
-
+})->name('disbursements.details');
