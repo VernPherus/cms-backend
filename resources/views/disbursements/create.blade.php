@@ -2,15 +2,17 @@
 
 @section('content')
     <div class="row justify-content-center">
-        <div class="col-lg-10"> <div class="card shadow-sm">
+        <div class="col-lg-10">
+            <div class="card shadow-sm">
                 <div class="card-header bg-primary text-white">
                     <h5 class="mb-0 text-white"><i class="bi bi-file-earmark-text"></i> Create New Disbursement</h5>
                 </div>
                 <div class="card-body p-4">
-                    <form action="{{ route('disbursements.store') }}" method="POST">
+                    <form id="disbursementForm">
                         @csrf
 
-                        <h6 class="text-uppercase text-muted fw-bold mb-3" style="font-size: 0.8rem; letter-spacing: 1px;">Transaction Details</h6>
+                        <h6 class="text-uppercase text-muted fw-bold mb-3" style="font-size: 0.8rem; letter-spacing: 1px;">
+                            Transaction Details</h6>
                         <div class="row g-3 mb-4">
                             <div class="col-md-6">
                                 <label class="form-label fw-bold">Payee</label>
@@ -27,7 +29,8 @@
                                 <select name="fund_source_id" class="form-select" required>
                                     <option value="">Select Fund...</option>
                                     @foreach ($fundSources as $fund)
-                                        <option value="{{ $fund->id }}">{{ $fund->code }} - {{ $fund->name }}</option>
+                                        <option value="{{ $fund->id }}">{{ $fund->code }} - {{ $fund->name }}
+                                        </option>
                                     @endforeach
                                 </select>
                             </div>
@@ -42,43 +45,51 @@
                                 <div class="btn-group" role="group">
                                     <input type="radio" class="btn-check" name="method" id="method" value="manual">
                                     <label class="btn btn-outline-secondary" for="methodManual">Manual</label>
-                                  
-                                    <input type="radio" class="btn-check" name="method" id="method" value="online" checked>
+
+                                    <input type="radio" class="btn-check" name="method" id="method" value="online"
+                                        checked>
                                     <label class="btn btn-outline-secondary" for="methodOnline">Online</label>
                                 </div>
                             </div>
                         </div>
 
                         <div class="bg-light p-3 rounded border mb-4">
-                            <h6 class="text-uppercase text-muted fw-bold mb-3" style="font-size: 0.8rem; letter-spacing: 1px;">Document References</h6>
-                            
+                            <h6 class="text-uppercase text-muted fw-bold mb-3"
+                                style="font-size: 0.8rem; letter-spacing: 1px;">Document References</h6>
+
                             <div class="row g-3 mb-3">
                                 <div class="col-md-3">
                                     <label class="form-label small text-muted">ORS / BURs No.</label>
-                                    <input type="text" name="ors_num" class="form-control form-control-sm font-monospace">
+                                    <input type="text" name="ors_num"
+                                        class="form-control form-control-sm font-monospace">
                                 </div>
                                 <div class="col-md-3">
                                     <label class="form-label small text-muted">DV Number</label>
-                                    <input type="text" name="dv_num" class="form-control form-control-sm font-monospace">
+                                    <input type="text" name="dv_num"
+                                        class="form-control form-control-sm font-monospace">
                                 </div>
                                 <div class="col-md-3">
                                     <label class="form-label small text-muted">LDDAP No.</label>
-                                    <input type="text" name="lddap_num" class="form-control form-control-sm font-monospace">
+                                    <input type="text" name="lddap_num"
+                                        class="form-control form-control-sm font-monospace">
                                 </div>
                                 <div class="col-md-3">
                                     <label class="form-label small text-muted">ACIC Number</label>
-                                    <input type="text" name="acic_num" class="form-control form-control-sm font-monospace">
+                                    <input type="text" name="acic_num"
+                                        class="form-control form-control-sm font-monospace">
                                 </div>
                             </div>
 
                             <div class="row g-3">
                                 <div class="col-md-6">
                                     <label class="form-label small text-muted">UACS Code</label>
-                                    <input type="text" name="uacs_code" class="form-control form-control-sm font-monospace">
+                                    <input type="text" name="uacs_code"
+                                        class="form-control form-control-sm font-monospace">
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label small text-muted">Responsibility Code</label>
-                                    <input type="text" name="resp_code" class="form-control form-control-sm font-monospace">
+                                    <input type="text" name="resp_code"
+                                        class="form-control form-control-sm font-monospace">
                                 </div>
                             </div>
                         </div>
@@ -94,7 +105,8 @@
                             <div class="col-lg-7 mb-4">
                                 <div class="d-flex justify-content-between align-items-center mb-2">
                                     <h6 class="text-primary fw-bold mb-0">Disbursement Items (Gross)</h6>
-                                    <button type="button" class="btn btn-sm btn-outline-primary" onclick="addItemRow()">+ Add Item</button>
+                                    <button type="button" class="btn btn-sm btn-outline-primary" onclick="addItemRow()">+
+                                        Add Item</button>
                                 </div>
                                 <div class="table-responsive">
                                     <table class="table table-bordered table-sm" id="items_table">
@@ -107,9 +119,14 @@
                                         </thead>
                                         <tbody>
                                             <tr>
-                                                <td><input type="text" name="items[0][description]" class="form-control form-control-sm" required></td>
-                                                <td><input type="number" step="0.01" name="items[0][amount]" class="form-control form-control-sm" placeholder="0.00" required></td>
-                                                <td class="text-center"><button type="button" class="btn btn-danger btn-sm py-0" onclick="removeRow(this)">&times;</button></td>
+                                                <td><input type="text" name="items[0][description]"
+                                                        class="form-control form-control-sm" required></td>
+                                                <td><input type="number" step="0.01" name="items[0][amount]"
+                                                        class="form-control form-control-sm" placeholder="0.00" required>
+                                                </td>
+                                                <td class="text-center"><button type="button"
+                                                        class="btn btn-danger btn-sm py-0"
+                                                        onclick="removeRow(this)">&times;</button></td>
                                             </tr>
                                         </tbody>
                                     </table>
@@ -119,7 +136,8 @@
                             <div class="col-lg-5 mb-4">
                                 <div class="d-flex justify-content-between align-items-center mb-2">
                                     <h6 class="text-danger fw-bold mb-0">Deductions</h6>
-                                    <button type="button" class="btn btn-sm btn-outline-danger" onclick="addDeductionRow()">+ Add Deduction</button>
+                                    <button type="button" class="btn btn-sm btn-outline-danger"
+                                        onclick="addDeductionRow()">+ Add Deduction</button>
                                 </div>
                                 <div class="table-responsive">
                                     <table class="table table-bordered table-sm" id="deductions_table">
@@ -131,7 +149,7 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            </tbody>
+                                        </tbody>
                                     </table>
                                 </div>
                             </div>
@@ -150,6 +168,67 @@
 
 @push('scripts')
     <script>
+        /**
+         * Handle form submission
+        */
+        document.getElementById('disbursementForm').addEventListener('submit', function(e) {
+            e.preventDefault(); // STOP the browser from refreshing
+
+            // get the form data
+            let formData = new FormData(this);
+            const submitBtn = this.querySelector('button[type="submit"]');
+
+            // disable button to prevent double-clicks
+            submitBtn.disabled = true;
+            submitBtn.innerText = 'Saving...';
+
+            // send to API
+            fetch('/api/disbursements/store', { 
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json', 
+                    },
+                    body: formData
+                })
+                .then(response => response.json().then(data => ({
+                    status: response.status,
+                    body: data
+                })))
+                .then(({
+                    status,
+                    body
+                }) => {
+
+                    // 3. Handle Success (201 Created)
+                    if (status === 201 || status === 200) {
+                        alert('Success: ' + body.message);
+                        window.location.href = '/disbursements'; 
+                    }
+                    // handle validation errors 
+                    else if (status === 422) {
+                        let errorMsg = 'Validation Failed:\n';
+                        for (const [key, messages] of Object.entries(body.errors)) {
+                            errorMsg += `• ${messages[0]}\n`;
+                        }
+                        alert(errorMsg);
+                        submitBtn.disabled = false;
+                        submitBtn.innerText = 'Save Record';
+                    }
+                    // handle server errors
+                    else {
+                        alert('Error: ' + (body.error || body.message || 'Something went wrong'));
+                        submitBtn.disabled = false;
+                        submitBtn.innerText = 'Save Record';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Network error occurred.');
+                    submitBtn.disabled = false;
+                    submitBtn.innerText = 'Save Record';
+                });
+        });
+
         let itemIndex = 1;
         let deductionIndex = 0;
 

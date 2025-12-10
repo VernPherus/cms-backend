@@ -17,8 +17,9 @@ Route::apiResource('payees', PayeeAccountController::class);
 Route::apiResource('funds', FundAccountController::class);
 
 // Approve routes
-Route::patch('/disbursements/{id}/approve', [DisbusrsementController::class, 'approve'])->name('disbursements.approve');
+Route::patch('/disbursements/{id}/approve', [DisbursementController::class, 'approve'])->name('disbursements.approve');
 
 // Deactivate routes
-Route::patch('/payees/{id}deactivate', [PayeeAccountController::class, 'deactivate']);
+Route::patch('/payees/{id}/deactivate', [PayeeAccountController::class, 'deactivate']);
+Route::patch('/funds/{id}/deactivate', [FundAccountController::class, 'deactivate']);
 

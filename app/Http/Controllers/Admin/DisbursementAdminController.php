@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers\Admin;
 
-use Illuminate\Http\Request;
 use App\Models\Disbursement;
 use App\Models\Payee;
 use App\Models\FundSource;
 
-class DisbursementAdminController
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+
+class DisbursementAdminController extends Controller
 {
     /**
      * *TEST DISPLAY CODE:
