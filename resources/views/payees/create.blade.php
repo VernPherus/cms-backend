@@ -58,7 +58,7 @@
         .then(({ status, body }) => {
             if (status === 201) {
                 alert('Success: ' + body.message);
-                window.location.href = '/payees'; // Update to your payees list route
+                window.location.href = '/'; // Update to your payees list route
             } else {
                 alert('Error: ' + (body.message || JSON.stringify(body.errors)));
                 btn.disabled = false; btn.innerText = 'Save Payee';

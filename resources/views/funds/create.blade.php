@@ -52,7 +52,7 @@
         .then(({ status, body }) => {
             if (status === 201) {
                 alert('Success: ' + body.message);
-                window.location.href = '/funds'; // Update this URL to your actual funds list route
+                window.location.href = '/'; // Update this URL to your actual funds list route
             } else {
              let errorMsg = body.message || body.error;
                 
