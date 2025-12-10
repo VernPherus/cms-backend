@@ -43,10 +43,10 @@
                             <div class="col-md-6">
                                 <label class="form-label d-block">Payment Method</label>
                                 <div class="btn-group" role="group">
-                                    <input type="radio" class="btn-check" name="method" id="method" value="manual">
+                                    <input type="radio" class="btn-check" name="method" id="methodManual" value="manual">
                                     <label class="btn btn-outline-secondary" for="methodManual">Manual</label>
 
-                                    <input type="radio" class="btn-check" name="method" id="method" value="online"
+                                    <input type="radio" class="btn-check" name="method" id="methodOnline" value="online"
                                         checked>
                                     <label class="btn btn-outline-secondary" for="methodOnline">Online</label>
                                 </div>
@@ -183,7 +183,7 @@
             submitBtn.innerText = 'Saving...';
 
             // send to API
-            fetch('/api/disbursements/store', { 
+            fetch('/api/disbursements', { 
                     method: 'POST',
                     headers: {
                         'Accept': 'application/json', 
@@ -199,10 +199,10 @@
                     body
                 }) => {
 
-                    // 3. Handle Success (201 Created)
+                    // Handle success
                     if (status === 201 || status === 200) {
                         alert('Success: ' + body.message);
-                        window.location.href = '/disbursements'; 
+                        window.location.href = '/disbursementadmin'; 
                     }
                     // handle validation errors 
                     else if (status === 422) {
@@ -229,6 +229,9 @@
                 });
         });
 
+        /**
+         * Handle item and deductions row 
+        */
         let itemIndex = 1;
         let deductionIndex = 0;
 

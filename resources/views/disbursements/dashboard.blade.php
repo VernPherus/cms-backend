@@ -39,7 +39,7 @@
                         @endif
                     </td>
                     <td class="text-center">
-                        <a href="{{ route('disbursements.show', $record->id) }}" class="btn btn-sm btn-info text-white">View</a>
+                        <a href="{{ route('disbursements.details', $record->id) }}" class="btn btn-sm btn-info text-white">View</a>
                     </td>
                 </tr>
                 @endforeach
