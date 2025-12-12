@@ -35,6 +35,7 @@ class FundAccountController extends Controller
         // input validation
         $validated = $requests->validate([
             'name' => 'required|string|max:255',
+            'initial_balance' => 'required|numeric|min:0',
             'code' => 'required|string|unique:fund_sources,code|max:50',
             'description' => 'nullable|string',
         ]);
@@ -45,6 +46,7 @@ class FundAccountController extends Controller
             return DB::transaction(function () use ($validated){
                 $fundSource = FundSource::create([
                     'name' => $validated['name'],
+                    'initial_balance' => $validated['initial_balance'],
                     'code' => $validated['code'],
                     'description' => $validated['description'] ?? null,
                     'is_active' => true,
@@ -84,6 +86,7 @@ class FundAccountController extends Controller
         // input validation
         $validated = $requests->validate([
             'name' => 'required|string|max:255',
+            'initial_balance' => 'required|numeric|min:0',
             // Unique check ignores the current ID (so you can update name without changing code)
             'code' => 'required|string|max:50|unique:fund_sources,code,' . $id,
             'description' => 'nullable|string',
@@ -92,6 +95,7 @@ class FundAccountController extends Controller
         try {
             $fundSource->update([
                 'name'->$validated['name'],
+                'initial_balance'->$validated['initial_balance'],
                 'code'->$validated['code'],
                 'description'->$validated['description'] ?? null,
             ]);
