@@ -1,55 +1,135 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="row justify-content-center">
-        <div class="col-md-8 col-lg-6">
-            <div class="card shadow-sm">
-                <div class="card-header bg-primary text-white">
-                    <h5 class="mb-0 text-white"><i class="bi bi-bank"></i> Create New Fund Source</h5>
-                </div>
-                <div class="card-body p-4">
-                    <form id="fundForm">
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">Fund Name</label>
-                            <input type="text" name="name" class="form-control" placeholder="e.g., General Fund"
-                                required>
-                        </div>
+<div class="container-fluid">
+    <div class="row">
+        
+        <nav id="sidebar" class="col-md-3 col-lg-2 d-md-block bg-white sidebar shadow-sm collapse" style="min-height: 100vh;">
+            <div class="position-sticky pt-4 px-3">
+                <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-2 mb-3 text-muted text-uppercase fw-bold" style="font-size: 0.75rem; letter-spacing: 1px;">
+                    <span>Management</span>
+                </h6>
+                <ul class="nav flex-column mb-4">
+                    <li class="nav-item mb-2">
+                        <a class="nav-link text-secondary d-flex align-items-center gap-2 p-2 rounded hover-bg-light" href="{{ route('disbursementadmin.index') }}">
+                            <i class="bi bi-speedometer2"></i> Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item mb-1">
+                        <a class="nav-link text-secondary d-flex align-items-center gap-2 p-2 rounded hover-bg-light" href="{{ route('disbursementadmin.create') }}">
+                            <i class="bi bi-plus-circle"></i> New Disbursement
+                        </a>
+                    </li>
+                </ul>
 
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">Fund Code</label>
-                            <input type="text" name="code" class="form-control font-monospace"
-                                placeholder="e.g., GF-101" required>
-                            <div class="form-text">Must be unique.</div>
-                        </div>
+                <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-3 text-muted text-uppercase fw-bold" style="font-size: 0.75rem; letter-spacing: 1px;">
+                    <span>Administration</span>
+                </h6>
+                <ul class="nav flex-column">
+                    <li class="nav-item mb-1">
+                        <a class="nav-link active d-flex align-items-center gap-2 p-2 rounded bg-light text-primary fw-bold" href="#">
+                            <i class="bi bi-bank"></i> Add Fund Source
+                        </a>
+                    </li>
+                    <li class="nav-item mb-1">
+                        <a class="nav-link text-secondary d-flex align-items-center gap-2 p-2 rounded hover-bg-light" href="{{ route('disbursementadmin.payeeform') }}">
+                            <i class="bi bi-people"></i> Add Payee
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
 
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">Initial Balance</label>
-                            <input type="number" step="0.01" min="0" name="initial_balance" class="form-control" placeholder="0.0"
-                                required>
-                        </div>
-
-
-                        <div class="mb-4">
-                            <label class="form-label fw-bold">Description (Optional)</label>
-                            <textarea name="description" class="form-control" rows="3"></textarea>
-                        </div>
-
-                        <div class="d-flex justify-content-end">
-                            <a href="{{ url('/funds') }}" class="btn btn-secondary me-2">Cancel</a>
-                            <button type="submit" class="btn btn-success px-4">Save Fund</button>
-                        </div>
-                    </form>
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4 bg-light">
+            
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-4 border-bottom">
+                <div>
+                    <h1 class="h2 fw-bold text-dark mb-0">Fund Management</h1>
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb mb-0">
+                            <li class="breadcrumb-item"><a href="{{ route('disbursementadmin.index') }}" class="text-decoration-none">Dashboard</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Add Fund Source</li>
+                        </ol>
+                    </nav>
                 </div>
             </div>
-        </div>
+
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="card shadow-sm border-0 rounded-3">
+                        <div class="card-header bg-white py-3 border-bottom">
+                            <h5 class="mb-0 fw-bold text-primary"><i class="bi bi-bank me-2"></i>Create New Fund Source</h5>
+                        </div>
+                        
+                        <div class="card-body p-4">
+                            <form id="fundForm">
+                                
+                                <div class="mb-4">
+                                    <label class="form-label fw-bold">Fund Name</label>
+                                    <input type="text" name="name" class="form-control" placeholder="e.g., General Fund 2024" required>
+                                </div>
+
+                                <div class="row g-3 mb-4">
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-bold">Fund Code</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-light text-muted"><i class="bi bi-upc-scan"></i></span>
+                                            <input type="text" name="code" class="form-control font-monospace text-uppercase" placeholder="GF-101" required>
+                                        </div>
+                                        <div class="form-text small">Must be unique. Used for referencing.</div>
+                                    </div>
+                                    
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-bold">Initial Balance</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-light text-muted">PHP</span>
+                                            <input type="number" step="0.01" min="0" name="initial_balance" class="form-control text-end" placeholder="0.00" required>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="mb-4">
+                                    <label class="form-label fw-bold">Description (Optional)</label>
+                                    <textarea name="description" class="form-control" rows="3" placeholder="Enter details about this fund's purpose..."></textarea>
+                                </div>
+
+                                <hr class="my-4 text-muted">
+
+                                <div class="d-flex justify-content-end">
+                                    <a href="{{ route('disbursementadmin.index') }}" class="btn btn-light border me-2">Cancel</a>
+                                    <button type="submit" class="btn btn-success px-4 fw-bold shadow-sm">Save Fund Source</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
     </div>
+</div>
+
+<style>
+    /* Sidebar Hover Effects */
+    .hover-bg-light:hover {
+        background-color: #f8f9fa !important;
+        color: #0d6efd !important;
+        transition: all 0.2s;
+    }
+    .nav-link {
+        color: #6c757d;
+        font-weight: 500;
+    }
+</style>
 @endsection
 
 @push('scripts')
     <script>
         document.getElementById('fundForm').addEventListener('submit', function(e) {
             e.preventDefault();
+            
             const btn = this.querySelector('button[type="submit"]');
+            const originalText = btn.innerText; // Defined here so it can be used in catch/else blocks
+            
             btn.disabled = true;
             btn.innerText = 'Saving...';
 
@@ -70,7 +150,7 @@
                 }) => {
                     if (status === 201) {
                         alert('Success: ' + body.message);
-                        window.location.href = '/'; // Update this URL to your actual funds list route
+                        window.location.href = '/disbursementadmin'; 
                     } else {
                         let errorMsg = body.message || body.error;
 
