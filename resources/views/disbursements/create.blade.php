@@ -95,7 +95,7 @@
                                 <label class="form-label d-block">Payment Method</label>
                                 <div class="btn-group w-100 w-md-auto" role="group">
                                     <input type="radio" class="btn-check" name="method" id="methodManual" value="manual">
-                                    <label class="btn btn-outline-secondary" for="methodManual">Manua</label>
+                                    <label class="btn btn-outline-secondary" for="methodManual">Manual</label>
 
                                     <input type="radio" class="btn-check" name="method" id="methodOnline" value="online" checked>
                                     <label class="btn btn-outline-secondary" for="methodOnline">Online</label>

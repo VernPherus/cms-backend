@@ -81,13 +81,6 @@
                                         </select>
                                     </div>
                                     
-                                    <div class="col-md-6">
-                                        <label class="form-label fw-bold">TIN Number</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text bg-light text-muted"><i class="bi bi-card-heading"></i></span>
-                                            <input type="text" name="tin_number" class="form-control font-monospace" placeholder="000-000-000-000">
-                                        </div>
-                                    </div>
                                 </div>
 
                                 <div class="mb-4">
